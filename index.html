@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resource Runners: The Great Supply Chain Challenge!</title>
+    <!-- Chosen Palette: Playful Blueprint (Off-White, Blueprint Blue, Sunny Yellow, Vibrant Orange) -->
+    <!-- Application Structure Plan: A single-page, vertically scrolling digital lesson plan. The architecture is designed for teacher usability, presenting information in a logical top-down flow: high-level summary, objectives, narrative, and then a detailed, interactive Game Flow. The core 'Game Play' phase uses an accordion structure for the different 'Zones'. This prevents overwhelming the user with a long wall of text and allows them to focus on one activity at a time, which is a more effective way to consume and plan a multi-part lesson. A new AI tools section provides dynamic content generation to assist teachers. -->
+    <!-- Visualization & Content Choices: The report content is primarily procedural and descriptive. Goal: Inform/Organize -> Viz/Method: Structured HTML/CSS with clear typography, icons, and color-coded sections. The 'Zones' are presented as interactive accordion panels. -> Interaction: Clicking a Zone title expands to show its detailed activities, differentiation, and assessment strategies. The new AI section uses forms and buttons to call the Gemini API, generating text content dynamically. -> Justification: This interactive structure makes the dense 'Game Flow' section manageable and scannable. The AI tools add significant value by making the lesson plan adaptable and reducing teacher prep time. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Bungee&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8f7f2; /* Off-white */
+            color: #333;
+        }
+        .font-display {
+            font-family: 'Bungee', cursive;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease-in-out;
+        }
+        .section-title {
+            font-family: 'Bungee', cursive;
+            font-size: 2rem;
+            color: #0d47a1; /* Blueprint Blue */
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+        }
+        .zone-header {
+            cursor: pointer;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s;
+        }
+        .zone-header:hover {
+            background-color: #e3f2fd;
+        }
+        .zone-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+            padding: 0 1.5rem;
+        }
+        .zone-content.active {
+             padding-top: 1rem;
+             padding-bottom: 1.5rem;
+        }
+        .ai-tool-tab {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .ai-tool-tab.active {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+            border-color: #0d47a1;
+        }
+        .ai-tool-content {
+            display: none;
+        }
+        .ai-tool-content.active {
+            display: block;
+        }
+        .btn-gemini {
+            background-color: #0d47a1;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-gemini:hover {
+            background-color: #155cb0;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0d47a1;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="text-center py-12 md:py-16 bg-white border-b-4 border-[#ffc107]">
+        <div class="max-w-4xl mx-auto px-4">
+            <h1 class="font-display text-4xl md:text-6xl text-[#0d47a1] uppercase">Resource Runners</h1>
+            <p class="mt-2 text-lg md:text-xl text-slate-500 font-semibold">The Great Supply Chain Challenge!</p>
+            <p class="mt-6 max-w-2xl mx-auto text-slate-600">
+                A Grade 5 sandbox lesson turning "Numbers, Operations and Relationships" into a hands-on, collaborative adventure in resource management.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-4 md:p-8 space-y-16">
+
+        <!-- Narrative Hook -->
+        <section id="hook">
+            <h2 class="section-title"><i data-lucide="megaphone" class="text-amber-500"></i>Mission Briefing</h2>
+            <div class="card p-8 text-center bg-[#fffde7] border-[#ffc107]">
+                <p class="text-lg leading-relaxed text-slate-700 italic">
+                    "Alright, future Tycoons and Master Builders! The legendary 'City of Tomorrow' needs YOU! A massive meteor shower has messed up all the supply chains... Your mission is to become 'Resource Runners,' navigating epic challenges to collect, calculate, and distribute vital supplies. Ready to prove your squad is the best supply chain team in the biz?"
+                </p>
+            </div>
+        </section>
+
+        <!-- Objectives -->
+        <section id="objectives">
+            <h2 class="section-title"><i data-lucide="target" class="text-amber-500"></i>Learning Objectives</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="card p-4"><h3 class="font-bold text-lg text-[#0d47a1]">Identify</h3><p class="text-sm text-slate-600">Key numerical data (quantities, costs, capacities) in a resource challenge.</p></div>
+                <div class="card p-4"><h3 class="font-bold text-lg text-[#0d47a1]">Explain</h3><p class="text-sm text-slate-600">The relationship between numbers and operations in a resource problem.</p></div>
+                <div class="card p-4"><h3 class="font-bold text-lg text-[#0d47a1]">Calculate</h3><p class="text-sm text-slate-600">Totals and remainders using multi-digit multiplication and division.</p></div>
+                <div class="card p-4"><h3 class="font-bold text-lg text-[#0d47a1]">Compare</h3><p class="text-sm text-slate-600">Different strategies for resource distribution to find the most effective approach.</p></div>
+                <div class="card p-4"><h3 class="font-bold text-lg text-[#0d47a1]">Devise</h3><p class="text-sm text-slate-600">A viable solution to a complex resource management problem.</p></div>
+            </div>
+        </section>
+
+        <!-- Game Flow -->
+        <section id="game-flow">
+            <h2 class="section-title"><i data-lucide="map" class="text-amber-500"></i>Game Flow</h2>
+            <div class="card p-6 space-y-8">
+                <div>
+                    <h3 class="font-display text-2xl text-orange-600">Phase 1: Mission Briefing & Team Assembly</h3>
+                    <div class="mt-4 pl-4 border-l-4 border-orange-200 space-y-3 text-slate-700">
+                        <p><strong>Character Creation & Team Formation (10 mins):</strong> Students form 'Supply Squads' of 4-5, create a team logo, and discuss roles (Lead Calculator, Logistics Planner, etc.).</p>
+                        <p><strong>Knowledge Refresh (10 mins):</strong> A quick 'Number Noodle' challenge on mini whiteboards with multiplication/division facts to activate prior knowledge.</p>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-display text-2xl text-green-600">Phase 2: The Great Supply Chain Challenge!</h3>
+                    <p class="mt-2 text-slate-600 mb-4">Students move through a series of 'zones,' each presenting a different numerical challenge. Click each zone to see the details.</p>
+                    <div id="zones-container" class="space-y-2"></div>
+                </div>
+                <div>
+                    <h3 class="font-display text-2xl text-purple-600">Phase 3: Mission Accomplished: Reflect & Share</h3>
+                    <div class="mt-4 pl-4 border-l-4 border-purple-200 space-y-3 text-slate-700">
+                        <p><strong>'City Council' Debrief (15 mins):</strong> Squads share their final 'build score' and a key learning or challenge, focusing on the 'how' and 'why' of their decisions.</p>
+                        <p><strong>Exit Ticket (5 mins):</strong> Students write one 'Supply Chain Secret' (a key takeaway about numbers/operations) as a final formative assessment.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Tools Section -->
+        <section id="ai-tools">
+            <h2 class="section-title"><i data-lucide="sparkles" class="text-amber-500"></i>AI-Powered Tools</h2>
+            <div class="card p-6">
+                <div class="flex flex-wrap gap-2 border-b border-gray-200 mb-4">
+                    <button id="tab-challenge" class="ai-tool-tab active">Challenge Generator</button>
+                    <button id="tab-diff" class="ai-tool-tab">Differentiation Assistant</button>
+                    <button id="tab-story" class="ai-tool-tab">Story Spark</button>
+                </div>
+
+                <!-- Challenge Generator -->
+                <div id="content-challenge" class="ai-tool-content active">
+                    <h3 class="font-bold text-xl text-[#0d47a1] mb-2">Challenge Generator</h3>
+                    <p class="text-slate-600 mb-4">Create unique, theme-appropriate word problems for your 'Order Cards'.</p>
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="challenge-zone" class="font-semibold text-slate-700 block mb-1">Select Zone</label>
+                            <select id="challenge-zone" class="w-full p-2 border border-gray-300 rounded-md">
+                                <option value="Quarry (Multiplication)">The Quarry (Multiplication)</option>
+                                <option value="Refinery (Division)">The Refinery (Division)</option>
+                                <option value="Construction Site (Multi-step)">The Construction Site (Multi-step)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="challenge-difficulty" class="font-semibold text-slate-700 block mb-1">Select Difficulty</label>
+                            <select id="challenge-difficulty" class="w-full p-2 border border-gray-300 rounded-md">
+                                <option value="Easy (2-digit by 1-digit)">Easy (2-digit by 1-digit)</option>
+                                <option value="Medium (2-digit by 2-digit)">Medium (2-digit by 2-digit)</option>
+                                <option value="Hard (3-digit by 2-digit)">Hard (3-digit by 2-digit)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button id="btn-generate-challenge" class="btn-gemini">
+                        <i data-lucide="lightbulb"></i> Generate Challenges
+                    </button>
+                    <div id="challenge-result" class="mt-4 p-4 bg-gray-50 rounded-md border border-gray-200 min-h-[100px] whitespace-pre-wrap"></div>
+                </div>
+
+                <!-- Differentiation Assistant -->
+                <div id="content-diff" class="ai-tool-content">
+                    <h3 class="font-bold text-xl text-[#0d47a1] mb-2">Differentiation Assistant</h3>
+                    <p class="text-slate-600 mb-4">Get specific strategies to support diverse learners in any zone.</p>
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="diff-zone" class="font-semibold text-slate-700 block mb-1">Select Zone</label>
+                            <select id="diff-zone" class="w-full p-2 border border-gray-300 rounded-md">
+                                <option value="The Quarry">The Quarry</option>
+                                <option value="The Refinery">The Refinery</option>
+                                <option value="The Construction Site">The Construction Site</option>
+                                <option value="The Trade Hub">The Trade Hub</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="diff-need" class="font-semibold text-slate-700 block mb-1">Describe Student Need</label>
+                            <input type="text" id="diff-need" class="w-full p-2 border border-gray-300 rounded-md" placeholder="e.g., struggles with multi-step problems">
+                        </div>
+                    </div>
+                    <button id="btn-generate-diff" class="btn-gemini">
+                        <i data-lucide="user-check"></i> Suggest Strategies
+                    </button>
+                    <div id="diff-result" class="mt-4 p-4 bg-gray-50 rounded-md border border-gray-200 min-h-[100px] whitespace-pre-wrap"></div>
+                </div>
+
+                <!-- Story Spark -->
+                <div id="content-story" class="ai-tool-content">
+                    <h3 class="font-bold text-xl text-[#0d47a1] mb-2">Story Spark</h3>
+                    <p class="text-slate-600 mb-4">Adapt the lesson's narrative hook to a new theme that will excite your class.</p>
+                    <div class="mb-4">
+                        <label for="story-theme" class="font-semibold text-slate-700 block mb-1">Enter a New Theme</label>
+                        <input type="text" id="story-theme" class="w-full p-2 border border-gray-300 rounded-md" placeholder="e.g., Space Station Rescue, Ancient Jungle Expedition">
+                    </div>
+                    <button id="btn-generate-story" class="btn-gemini">
+                        <i data-lucide="book-image"></i> Generate New Hook
+                    </button>
+                    <div id="story-result" class="mt-4 p-4 bg-gray-50 rounded-md border border-gray-200 min-h-[100px] whitespace-pre-wrap"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources & Strategies -->
+        <section id="resources">
+             <h2 class="section-title"><i data-lucide="box" class="text-amber-500"></i>Toolkit & Strategies</h2>
+             <div class="grid md:grid-cols-2 gap-8">
+                <div class="card p-6"><h3 class="font-bold text-xl mb-3 text-[#0d47a1]">Physical Materials</h3><ul class="list-disc list-inside space-y-1 text-slate-600"><li>Lego bricks, blocks, or counters</li><li>Small trays or containers</li><li>Paper, markers, and crayons</li><li>Index cards for Orders/Tickets</li><li>Mini whiteboards & markers</li><li>Optional: Play money, rulers</li></ul></div>
+                <div class="card p-6"><h3 class="font-bold text-xl mb-3 text-[#0d47a1]">Inclusive Strategies</h3><ul class="list-disc list-inside space-y-1 text-slate-600"><li>Differentiated Instruction</li><li>Multisensory Teaching (V-A-K)</li><li>Active & Collaborative Learning</li><li>Embedded Formative Assessment</li><li>Universal Design for Learning (UDL)</li></ul></div>
+             </div>
+        </section>
+    </main>
+
+    <footer class="text-center py-8 mt-12 bg-white border-t border-slate-200"><p class="text-slate-500">A Fourth Wall Labs Alchemical Blueprint</p></footer>
+
+    <script>
+        const zones = [
+            { name: "The Quarry (Multiplication Zone)", color: "bg-amber-100", icon: "gem", iconColor: "text-amber-600", content: `<p><strong>Goal:</strong> Collect raw materials (blocks, counters) for city construction.</p><p><strong>Activity:</strong> Squads get a 'Quarry Order Card' (e.g., 'Extract 12 batches of 15 stone blocks each') and physically group blocks onto their 'delivery pallets' (trays).</p><p><strong>Differentiation:</strong> Vary multiplication complexity. Provide calculators for some teams to focus on problem setup.</p><p><strong>Assessment:</strong> Observe grouping strategies. Use 'Think-Pair-Share' for students to explain their methods.</p>` },
+            { name: "The Refinery (Division Zone)", color: "bg-sky-100", icon: "flask-conical", iconColor: "text-sky-600", content: `<p><strong>Goal:</strong> Process raw materials into usable units.</p><p><strong>Activity:</strong> Squads get 'Refinery Processing Orders' (e.g., 'Divide 180 stone blocks equally into 12 processed units') and physically divide their blocks.</p><p><strong>Differentiation:</strong> Allow physical partitioning, number lines, or grid paper to show work.</p><p><strong>Assessment:</strong> Ask probing questions like 'Why did you choose that many blocks for each unit?'</p>` },
+            { name: "The Construction Site (Application Zone)", color: "bg-red-100", icon: "hard-hat", iconColor: "text-red-600", content: `<p><strong>Goal:</strong> Build essential city structures efficiently.</p><p><strong>Activity:</strong> Squads use a 'City Blueprint' with material requirements to build as many structures as possible, calculating leftovers and maximizing their 'build score'.</p><p><strong>Differentiation:</strong> Blueprints can vary in complexity, some with stricter budgets or multi-step problems.</p><p><strong>Assessment:</strong> Squads present their 'build' and justify their material usage in a short oral report.</p>` },
+            { name: "The Trade Hub (Optimization Zone)", color: "bg-lime-100", icon: "repeat", iconColor: "text-lime-600", content: `<p><strong>Goal:</strong> Optimize resource flow by trading or re-allocating supplies.</p><p><strong>Activity:</strong> Squads identify surplus/deficit and engage in 'inter-squad trading' to complete shared 'Mega-Projects', requiring strategic thinking and comparison.</p><p><strong>Differentiation:</strong> Use 'trade offer' cards with different values to force more complex mental math.</p><p><strong>Assessment:</strong> A 'One-Minute Paper' at the end: 'What was your biggest challenge in resource allocation?'</p>` }
+        ];
+
+        const zonesContainer = document.getElementById('zones-container');
+        zones.forEach(zone => {
+            const zoneEl = document.createElement('div');
+            zoneEl.innerHTML = `<div class="zone-header ${zone.color}"><div class="flex justify-between items-center"><h4 class="font-bold text-lg text-slate-800 flex items-center gap-3"><i data-lucide="${zone.icon}" class="${zone.iconColor}"></i>${zone.name}</h4><i data-lucide="chevron-down" class="transition-transform duration-300"></i></div></div><div class="zone-content border-l-2 border-r-2 border-b-2 border-gray-200 rounded-b-md"><div class="space-y-2 text-slate-600">${zone.content}</div></div>`;
+            zonesContainer.appendChild(zoneEl);
+        });
+
+        lucide.createIcons();
+
+        zonesContainer.addEventListener('click', (e) => {
+            const header = e.target.closest('.zone-header');
+            if (!header) return;
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('i[data-lucide="chevron-down"]');
+            const isActive = content.classList.contains('active');
+            zonesContainer.querySelectorAll('.zone-content').forEach(c => { c.classList.remove('active'); c.style.maxHeight = null; c.previousElementSibling.querySelector('i[data-lucide="chevron-down"]').style.transform = 'rotate(0deg)'; });
+            if (!isActive) { content.classList.add('active'); content.style.maxHeight = content.scrollHeight + "px"; icon.style.transform = 'rotate(180deg)'; }
+        });
+
+        // AI Tools Logic
+        const tabs = document.querySelectorAll('.ai-tool-tab');
+        const contents = document.querySelectorAll('.ai-tool-content');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(`content-${tab.id.split('-')[1]}`).classList.add('active');
+            });
+        });
+
+        const showLoading = (resultDiv) => {
+            resultDiv.innerHTML = '<div class="flex justify-center items-center"><div class="loader"></div></div>';
+        };
+
+        const callGeminiAPI = async (prompt, resultDiv) => {
+            showLoading(resultDiv);
+            let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = { contents: chatHistory };
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API request failed with status ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    resultDiv.textContent = text.trim();
+                } else {
+                    resultDiv.textContent = 'Sorry, I could not generate a response. Please try again.';
+                }
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                resultDiv.textContent = `An error occurred: ${error.message}. Please check the console for details.`;
+            }
+        };
+
+        document.getElementById('btn-generate-challenge').addEventListener('click', () => {
+            const zone = document.getElementById('challenge-zone').value;
+            const difficulty = document.getElementById('challenge-difficulty').value;
+            const resultDiv = document.getElementById('challenge-result');
+            const prompt = `Act as a Grade 5 math curriculum expert. Create 4 unique word problems for a game called 'Resource Runners'. The problems should be for the '${zone}' and involve ${difficulty} math. The theme is rebuilding a city after a meteor shower. The problems should be engaging for 10-year-olds. Present the output as a numbered list.`;
+            callGeminiAPI(prompt, resultDiv);
+        });
+
+        document.getElementById('btn-generate-diff').addEventListener('click', () => {
+            const zone = document.getElementById('diff-zone').value;
+            const need = document.getElementById('diff-need').value;
+            const resultDiv = document.getElementById('diff-result');
+            const prompt = `Act as an expert in differentiated instruction for Grade 5. For the '${zone}' activity in the 'Resource Runners' game, suggest 2-3 specific, actionable strategies to support a student who: "${need}". Provide one strategy for scaffolding support and one for an extension or enrichment activity. Format the response with clear headings.`;
+            callGeminiAPI(prompt, resultDiv);
+        });
+
+        document.getElementById('btn-generate-story').addEventListener('click', () => {
+            const theme = document.getElementById('story-theme').value;
+            const resultDiv = document.getElementById('story-result');
+            const originalHook = document.querySelector('#hook .italic').textContent;
+            const prompt = `You are a creative writer for educational games. Take the following narrative hook for a Grade 5 math game and rewrite it for a new theme: '${theme}'. Keep the core message of resource management and a call to action, but change the setting and specific details to match the new theme. Original Hook: "${originalHook}"`;
+            callGeminiAPI(prompt, resultDiv);
+        });
+
+    </script>
+</body>
+</html>
