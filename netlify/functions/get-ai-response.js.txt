@@ -1,0 +1,50 @@
+// This is your serverless function, it runs on Netlify's servers
+// It will receive the prompt from your website and safely call the Gemini API
+
+exports.handler = async function(event) {
+  // Get the prompt sent from your frontend
+  const { prompt } = JSON.parse(event.body);
+
+  // Get your secret API key from a secure environment variable on Netlify
+  const apiKey = process.env.GEMINI_API_KEY;
+
+  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+  const payload = {
+    contents: [{
+      role: "user",
+      parts: [{ text: prompt }]
+    }]
+  };
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      // If Google's API returns an error, send it back to the browser
+      return {
+        statusCode: response.status,
+        body: JSON.stringify({ error: `API request failed with status ${response.status}` })
+      };
+    }
+
+    const result = await response.json();
+
+    // Send the successful response back to your website
+    return {
+      statusCode: 200,
+      body: JSON.stringify(result)
+    };
+
+  } catch (error) {
+    // Handle network errors or other issues
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message })
+    };
+  }
+};
